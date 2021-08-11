@@ -10,18 +10,18 @@ Author: CW-TEAM
 
 ### Constraints
 
-Esperamos que dejes una app funcional. 
+Esperamos que dejes una app funcional.
 * En la página principal se tienen que mostrar las mejores 20 preguntas ordenadas según el siguiente ranking:
     1. Cada respuesta suma 10 puntos al ranking
     2. Cada like suma 5 puntos al ranking
     3. Cada dislike resta 3 puntos al ranking
     4. Las preguntas del día de hoy, tienen un extra de 10 puntos
-    
+
 
 _Ejemplo_:
-Una pregunta que tiene 6 respuesta de usuarios, 2 likes y 1 dislike:  
-ranking: `6*10 + 2*5 - 1*3 = 60 + 10 - 3 = 67`  
-Si además es del día de la hoy:  
+Una pregunta que tiene 6 respuesta de usuarios, 2 likes y 1 dislike:
+ranking: `6*10 + 2*5 - 1*3 = 60 + 10 - 3 = 67`
+Si además es del día de la hoy:
 ranking: `6*10 + 2*5 - 1*3 + 10 = 60 + 10 - 3 +10 = 77`
 
 ### A tener en cuenta:
@@ -33,9 +33,16 @@ ranking: `6*10 + 2*5 - 1*3 + 10 = 60 + 10 - 3 +10 = 77`
 - Si puedes levantar un entorno con docker, te invitamos a que lo hagas.
 - Nos gustaría ver que puedes generar un test con los casos de usos básicos.
 
-### 
+###
 
 ### Ejemplo
 Este es un ejemplo de como queda el listado con su ranking y se ve como respondió/votó el usuario actual.
 
 ![Example](example.png)
+
+
+## Solution:
+
+### Run application
+- export DJANGO_SECRET_KEY=your-secret-key
+- export DJANGO_SETTINGS_MODULE='quizes.dev'
