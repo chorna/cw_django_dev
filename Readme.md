@@ -41,7 +41,7 @@ Este es un ejemplo de como queda el listado con su ranking y se ve como respondi
 ![Example](example.png)
 
 
-## Solution:
+## Solution :sunglasses:
 
 ### Run application
 - export DJANGO_SECRET_KEY=your-secret-key

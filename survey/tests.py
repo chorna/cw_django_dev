@@ -18,10 +18,20 @@ class TestQuestions(TestCase):
             'title': 'title1'
         })
 
+        self.q2 = self.create_helper(Question, {
+            'author': self.user2,
+            'title': 'title2'
+        })
+
+        self.q3 = self.create_helper(Question, {
+            'author': self.user3,
+            'title': 'title3'
+        })
+
     def create_helper(model, data):
         return model.objects.create(**data)
 
-    def test_points(self):
+    def test_sort_by_points(self):
         answer1 = self.create_helper(Answer, {
             'question': self.q1,
             'author': self.user2
@@ -35,4 +45,27 @@ class TestQuestions(TestCase):
             'author': self.q2,
             'value': -1
         })
-        self.assertEquals(self.q1.points, 22)
+
+        answer2 = self.create_helper(Answer, {
+            'question': self.q2,
+            'author': self.user1
+        })
+
+        answer3 = self.create_helper(Answer, {
+            'question': self.q3,
+            'author': self.user1
+        })
+        answer4 = self.create_helper(Answer, {
+            'question': self.q3,
+            'author': self.user2
+        })
+
+        questions = Question.objects.sorted_by_points()
+        self.assertEquals(questions[0], self.q3)
+        self.assertEquals(questions[0], 30)
+
+        self.assertEquals(questions[1], self.q1)
+        self.assertEquals(questions[1], 22)
+
+        self.assertEquals(questions[2], self.q2)
+        self.assertEquals(questions[2], 20)
