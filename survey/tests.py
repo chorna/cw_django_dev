@@ -28,7 +28,7 @@ class TestQuestions(TestCase):
             'title': 'title3'
         })
 
-    def create_helper(model, data):
+    def create_helper(self, model, data):
         return model.objects.create(**data)
 
     def test_sort_by_points(self):
@@ -38,11 +38,11 @@ class TestQuestions(TestCase):
         })
         like1 = self.create_helper(Like, {
             'question': self.q1,
-            'author': self.q2
+            'author': self.user3
         })
         dislike1 = self.create_helper(Like, {
             'question': self.q1,
-            'author': self.q2,
+            'author': self.user2,
             'value': -1
         })
 
