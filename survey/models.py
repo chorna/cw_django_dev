@@ -11,13 +11,9 @@ from django.urls import reverse
 
 class QuestionManager(models.Manager):
     def sorted_by_points(self):
-        return self.annotate(
-            num_answers=Count('answers', distinct=True),
-            total_likes=Coalesce(Sum('likes__value'), Value(0)),
-            to_day=Case(
-                When(created=date.today(), then=10),
-                default=0
-            ),
+        return self.select_related(
+            'author'
+        ).annotate(
             points=Count('answers', distinct=True)*10
             + Coalesce(Sum('likes__value'), Value(0))
             + Case(
@@ -42,16 +38,17 @@ class Question(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('survey:question-edit', args=[self.pk])
-
+        return reverse('survey:question-list')
 
 class Answer(models.Model):
-    ANSWERS_VALUES = ((0,'Sin Responder'),
-                      (1,'Muy Bajo'),
-                      (2,'Bajo'),
-                      (3,'Regular'),
-                      (4,'Alto'),
-                      (5,'Muy Alto'),)
+    ANSWERS_VALUES = (
+        (0, 'Sin Responder'),
+        (1, 'Muy Bajo'),
+        (2, 'Bajo'),
+        (3, 'Regular'),
+        (4, 'Alto'),
+        (5, 'Muy Alto'),
+    )
 
     question = models.ForeignKey(Question, related_name="answers", verbose_name='Pregunta', on_delete=models.CASCADE)
     author = models.ForeignKey(get_user_model(), related_name="answers", verbose_name='Autor', on_delete=models.CASCADE)
@@ -61,12 +58,13 @@ class Answer(models.Model):
 
 class Like(models.Model):
     LIKE_VALUES = [
-        (5, 5),
-        (-3, -3)
+        (0, ''),
+        (5, 'like'),
+        (-3, 'dislike'),
     ]
     question = models.ForeignKey(Question, related_name='likes', on_delete=models.CASCADE)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    value = models.IntegerField("Respuesta", default=5, choices=LIKE_VALUES)
+    value = models.IntegerField("Respuesta", default=0, choices=LIKE_VALUES)
 
     def __str__(self) -> str:
         return "%s" % self.value

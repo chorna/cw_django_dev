@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load question_tag %}
 {% block content %}
     <h1>Preguntas</h1>
     <div class="d-flex flex-column">
@@ -18,8 +19,9 @@
                     <div class="d-flex flex-column col-4">
                         <u class="fw-lighter mb-1">Respuesta</u>
                         <div>
+                            {% question_user_answer question as question_answer_value %}
                             {% for val in '12345' %}
-                                <a class="mx-1 answer {% if question.user_value|slugify == val %}fas{% else %}fal{% endif %} fa-star text-decoration-none"
+                                <a class="mx-1 answer {% if question_answer_value|slugify == val %}fas{% else %}fal{% endif %} fa-star text-decoration-none"
                                    data-question="{{ question.pk }}"
                                    data-value="{{ val }}" href="#"></a>
                             {% endfor %}
@@ -28,19 +30,18 @@
                     <div class="col-4 d-flex flex-column ">
                         <u class="fw-lighter mb-1">Evalúa la pregunta</u>
                         <div>
-                            <a class="mx-1 like {% if question.user_likes %}fas{% else %}fal{% endif %} fa-thumbs-up text-decoration-none"
-                               href="#" data-question="{{ question.pk }}" data-value="like" ></a>
-                            <a class="mx-1 like {% if question.user_dislikes %}fas{% else %}fal{% endif %} fa-thumbs-up fa-flip-both text-decoration-none"
-                               href="#" data-question="{{ question.pk }}" data-value="dislike"></a>
+                            {% question_user_like question as question_like_value %}
+                            <a class="mx-1 like {% if question_like_value == 5 %}fas{% else %}fal{% endif %} fa-thumbs-up text-decoration-none"
+                               href="#" data-question="{{ question.pk }}" data-value="5" ></a>
+                            <a class="mx-1 like {% if question_like_value == -3 %}fas{% else %}fal{% endif %} fa-thumbs-up fa-flip-both text-decoration-none"
+                               href="#" data-question="{{ question.pk }}" data-value="-3"></a>
                         </div>
                     </div>
                     <div class="col-2">
                         <u class="fw-lighter mb-1">Ranking:</u>
                         <div>
-                           {{ question.ranking }} pts.
+                           {{ question.points }} pts.
                         </div>
-
-
                     </div>
                 </div>
             </div>

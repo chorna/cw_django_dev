@@ -7,6 +7,9 @@ from survey.models import Question, Answer
 class QuestionListView(ListView):
     model = Question
 
+    def get_queryset(self):
+        return self.model.objects.sorted_by_points()
+
 
 class QuestionCreateView(CreateView):
     model = Question
@@ -15,7 +18,6 @@ class QuestionCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-
         return super().form_valid(form)
 
 
@@ -27,7 +29,6 @@ class QuestionUpdateView(UpdateView):
 
 def answer_question(request):
     question_pk = request.POST.get('question_pk')
-    print(request.POST)
     if not request.POST.get('question_pk'):
         return JsonResponse({'ok': False})
     question = Question.objects.filter(pk=question_pk)[0]
@@ -38,6 +39,7 @@ def answer_question(request):
 
 def like_dislike_question(request):
     question_pk = request.POST.get('question_pk')
+    print(question_pk)
     if not request.POST.get('question_pk'):
         return JsonResponse({'ok': False})
     question = Question.objects.filter(pk=question_pk)[0]
