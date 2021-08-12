@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from django.contrib.auth import get_user_model
 
 from .models import Question, Answer, Like
@@ -43,7 +42,7 @@ class TestQuestions(TestCase):
         dislike1 = self.create_helper(Like, {
             'question': self.q1,
             'author': self.user2,
-            'value': -1
+            'value': -3
         })
 
         answer2 = self.create_helper(Answer, {

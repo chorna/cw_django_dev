@@ -1,15 +1,30 @@
 from datetime import date
 
 from django.db import models
-from django.db.models import F, Sum, Case, When, Count
+from django.db.models import Sum, Case, When, Count
+from django.db.models.functions import Coalesce
 from django.contrib.auth import get_user_model
-from django.urls import reverse
+from django.db.models.expressions import Value
 
+from django.urls import reverse
 
 
 class QuestionManager(models.Manager):
     def sorted_by_points(self):
-        pass
+        return self.annotate(
+            num_answers=Count('answers', distinct=True),
+            total_likes=Coalesce(Sum('likes__value'), Value(0)),
+            to_day=Case(
+                When(created=date.today(), then=10),
+                default=0
+            ),
+            points=Count('answers', distinct=True)*10
+            + Coalesce(Sum('likes__value'), Value(0))
+            + Case(
+                When(created=date.today(), then=10),
+                default=0
+            )
+        ).order_by('-points')
 
 
 class Question(models.Model):
@@ -21,6 +36,9 @@ class Question(models.Model):
 
     objects = QuestionManager()
     # TODO: Quisieramos tener un ranking de la pregunta, con likes y dislikes dados por los usuarios.
+
+    def __str__(self) -> str:
+        return self.title
 
     def get_absolute_url(self):
         return reverse('survey:question-edit', args=[self.pk])
@@ -51,3 +69,4 @@ class Like(models.Model):
 
     def __str__(self) -> str:
         return "%s" % self.value
+

@@ -46,3 +46,4 @@ Este es un ejemplo de como queda el listado con su ranking y se ve como respondi
 ### Run application
 - export DJANGO_SECRET_KEY=your-secret-key
 - export DJANGO_SETTINGS_MODULE='quizes.dev'
+- export DATABASE_URL=psql://user:password@host:port/database_name
