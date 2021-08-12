@@ -22,5 +22,4 @@ def question_user_answer(context, question):
     q = question.answers.filter(author=user).first()
     if not q:
         return 0
-    print(q.value)
     return q.value
