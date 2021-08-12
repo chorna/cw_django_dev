@@ -62,10 +62,10 @@ class TestQuestions(TestCase):
 
         questions = Question.objects.sorted_by_points()
         self.assertEquals(questions[0], self.q3)
-        self.assertEquals(questions[0], 30)
+        self.assertEquals(questions[0].points, 30)
 
         self.assertEquals(questions[1], self.q1)
-        self.assertEquals(questions[1], 22)
+        self.assertEquals(questions[1].points, 22)
 
         self.assertEquals(questions[2], self.q2)
-        self.assertEquals(questions[2], 20)
+        self.assertEquals(questions[2].points, 20)
