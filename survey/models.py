@@ -25,6 +25,7 @@ class QuestionManager(models.Manager):
                 default=0
             )
         ).order_by('-points')
+        # TODO: test performance, sug. select_related, raw queryset or sql
 
 
 class Question(models.Model):
