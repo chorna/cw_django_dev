@@ -12,16 +12,15 @@ from django.urls import reverse
 class QuestionManager(models.Manager):
     def sorted_by_points(self):
         return self.select_related(
-            'author'
-        ).annotate(
-            points=Count('answers', distinct=True)*10
-            + Coalesce(Sum('likes__value'), Value(0))
-            + Case(
-                When(created=date.today(), then=10),
-                default=0
-            )
-        ).order_by('-points')
-        # TODO: test performance, sug. select_related, raw queryset or sql
+                    'author'
+                ).annotate(
+                    points=Count('answers', distinct=True)*10
+                        + Coalesce(Sum('likes__value'), Value(0))
+                        + Case(
+                            When(created=date.today(), then=10),
+                            default=0
+                        )
+                ).order_by('-points')
 
 
 class Question(models.Model):
@@ -55,6 +54,9 @@ class Answer(models.Model):
     value = models.PositiveIntegerField("Respuesta", default=0, choices=ANSWERS_VALUES)
     comment = models.TextField("Comentario", default="", blank=True)
 
+    class Meta:
+        unique_together = ('question', 'author')
+
 
 class Like(models.Model):
     LIKE_VALUES = [
@@ -67,5 +69,8 @@ class Like(models.Model):
     value = models.IntegerField("Respuesta", default=0, choices=LIKE_VALUES)
 
     def __str__(self) -> str:
-        return "%s" % self.value
+        return f"{self.value}"
+
+    class Meta:
+        unique_together = ('question', 'author')
 

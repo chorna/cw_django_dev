@@ -1,7 +1,10 @@
+import json
+
 from django.http import JsonResponse
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
-from survey.models import Question, Answer
+
+from survey.models import Question, Answer, Like
 
 
 class QuestionListView(ListView):
@@ -28,21 +31,34 @@ class QuestionUpdateView(UpdateView):
 
 
 def answer_question(request):
-    question_pk = request.POST.get('question_pk')
-    if not request.POST.get('question_pk'):
+    body = json.loads(request.body)
+    question_pk = body.get('question_pk')
+    value = body.get('value')
+
+    if not question_pk:
         return JsonResponse({'ok': False})
-    question = Question.objects.filter(pk=question_pk)[0]
-    answer = Answer.objects.get(question=question, author=request.user)
-    answer.value = request.POST.get('value')
-    answer.save()
+    Answer.objects.update_or_create(
+        question_id=question_pk,
+        author_id=request.user.pk,
+        defaults={'value': value},
+        )
     return JsonResponse({'ok': True})
 
 def like_dislike_question(request):
-    question_pk = request.POST.get('question_pk')
-    print(question_pk)
-    if not request.POST.get('question_pk'):
+    body = json.loads(request.body)
+    question_pk = body.get('question_pk')
+    value = body.get('value')
+
+    if not question_pk:
         return JsonResponse({'ok': False})
-    question = Question.objects.filter(pk=question_pk)[0]
-    # TODO: Dar Like
+    like = Like.objects.filter(question=question_pk, author=request.user).first()
+    if like and like.value == int(value):
+        value = 0
+
+    Like.objects.update_or_create(
+        question_id=question_pk,
+        author_id=request.user.pk,
+        defaults={'value': value},
+    )
     return JsonResponse({'ok': True})
 

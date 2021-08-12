@@ -23,7 +23,7 @@
                             {% for val in '12345' %}
                                 <a class="mx-1 answer {% if question_answer_value|slugify == val %}fas{% else %}fal{% endif %} fa-star text-decoration-none"
                                    data-question="{{ question.pk }}"
-                                   data-value="{{ val }}" href="#"></a>
+                                   data-value="{{ val }}" href="#" onclick="sendAnswer(this)"></a>
                             {% endfor %}
                         </div>
                     </div>
@@ -32,9 +32,9 @@
                         <div>
                             {% question_user_like question as question_like_value %}
                             <a class="mx-1 like {% if question_like_value == 5 %}fas{% else %}fal{% endif %} fa-thumbs-up text-decoration-none"
-                               href="#" data-question="{{ question.pk }}" data-value="5" ></a>
+                               href="#" data-question="{{ question.pk }}" data-value="5" onclick="sendLikeDislike(this)"></a>
                             <a class="mx-1 like {% if question_like_value == -3 %}fas{% else %}fal{% endif %} fa-thumbs-up fa-flip-both text-decoration-none"
-                               href="#" data-question="{{ question.pk }}" data-value="-3"></a>
+                               href="#" data-question="{{ question.pk }}" data-value="-3" onclick="sendLikeDislike(this)"></a>
                         </div>
                     </div>
                     <div class="col-2">
@@ -53,7 +53,52 @@
 
 {% block js %}
     <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
 
+        const sendAnswer = async (question) => {
+            let id = question.getAttribute('data-question');
+            let value = question.getAttribute('data-value');
+            let data = {'question_pk': id, 'value': value};
+
+            let response = await fetch('question/answer', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+              },
+              body: JSON.stringify(data),
+            });
+        };
+
+        const sendLikeDislike = async (question) => {
+            let id = question.getAttribute('data-question');
+            let value = question.getAttribute('data-value');
+            let data = {'question_pk': id, 'value': value};
+
+            let response = await fetch('question/like', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+              },
+              body: JSON.stringify(data),
+            });
+        };
 
     </script>
 
